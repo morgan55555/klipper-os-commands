@@ -13,10 +13,14 @@ This plugin adds to Klipper this functionality.
 
 ## Klipper configuration
 
-Just copy that code and change parameters to any that you need.
-
 ```ini
 [os_commands]
-# new command, run it with OS_RUN COMMAND="command1"
-command1: ls /bin
+```
+
+## Usage
+
+```
+[gcode_macro TEST]
+gcode:
+    {printer.gcode.action_respond_info(printer.os_commands.run("ls"))}
 ```
