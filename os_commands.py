@@ -16,22 +16,14 @@ class OS_Commands:
     def __init__(self, config):
         self.printer = config.get_printer()
         self.config = config
-        self.gcode = self.printer.lookup_object('gcode')
-        self.gcode.register_command(
-            'OS_RUN', self.cmd_OS_RUN, when_not_ready=True, desc=self.cmd_OS_RUN_desc)
-    cmd_OS_RUN_desc = 'Run OS commands'
-    def cmd_OS_RUN(self, params):
-        command_id = self.gcode.get_str('COMMAND', params, None)
-        if command_id is None:
-            self.gcode.respond_info('Usage: OS_RUN COMMAND="command_name", define command_name: command in config')
-            return
-        command = self.config.get(command_id, '')
-        if not command:
-            self.gcode.respond_error('Command "%s" is not defined in config' % command_id )
-            return
+    def get_status(self, eventtime):
+        return {'run': self._run}
+    def _run(self, command):
         output = check_output(command, shell=True, universal_newlines=True)
         if output:
-            self.gcode.respond_info(output)
+            return str(output)
+        else:
+            return ""
 
 
 def load_config(config):
