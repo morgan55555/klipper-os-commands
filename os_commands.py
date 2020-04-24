@@ -10,7 +10,7 @@
 # git clone https://github.com/morgan55555/klipper-os-commands.git
 # ln -s ~/klipper-os-commands/os_commands.py ~/klipper/klippy/extras/os_commands.py
 #
-from subprocess import check_output
+import subprocess
 
 class OS_Commands:
     def __init__(self, config):
@@ -19,11 +19,13 @@ class OS_Commands:
     def get_status(self, eventtime):
         return {'run': self._run}
     def _run(self, command):
-        output = check_output(command, shell=True, universal_newlines=True)
-        if output:
+        output = None
+        try:
+            output = subprocess.check_output(command, shell=True, universal_newlines=True, stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            output = 'Error: ' + e.output
+        if output != None:
             return str(output)
-        else:
-            return ""
 
 
 def load_config(config):
